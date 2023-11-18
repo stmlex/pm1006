@@ -6,10 +6,10 @@ uart:
 
 sensor:
   - platform: pm1006
-    # pm_1_0:
-    #   name: "Concentration1 <1.0µm"
+    pm_1_0:
+      name: "Concentration1 <1.0µm"
     pm_2_5:
       name: "Concentration2 <2.5µm"
-    # pm_10_0:
-    #   name: "Concentration3 <10µm"
+    pm_10_0:
+      name: "Concentration3 <10µm"
     uart_id: pm1006_uart

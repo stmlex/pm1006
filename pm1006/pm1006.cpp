@@ -15,7 +15,9 @@ void PM1006Component::setup() {
 
 void PM1006Component::dump_config() {
   ESP_LOGCONFIG(TAG, "PM1006:");
+  LOG_SENSOR("  ", "PM1.0", this->pm_1_0_sensor_);
   LOG_SENSOR("  ", "PM2.5", this->pm_2_5_sensor_);
+  LOG_SENSOR("  ", "PM10.0", this->pm_10_0_sensor_);
   LOG_UPDATE_INTERVAL(this);
   this->check_uart_settings(9600);
 }
@@ -86,12 +88,20 @@ optional<bool> PM1006Component::check_byte_() const {
 }
 
 void PM1006Component::parse_data_() {
-  const int pm_2_5_concentration = this->get_16_bit_uint_(5);
-
-  ESP_LOGD(TAG, "Got PM2.5 Concentration: %d µg/m³", pm_2_5_concentration);
-
+  if (this->pm_1_0_sensor_ != nullptr) {
+    const int pm_1_0_concentration = this->get_16_bit_uint_(9);
+    ESP_LOGD(TAG, "Got PM1.0 Concentration: %d µg/m³", pm_1_0_concentration);
+    this->pm_1_0_sensor_->publish_state(pm_1_0_concentration);
+  }
   if (this->pm_2_5_sensor_ != nullptr) {
+    const int pm_2_5_concentration = this->get_16_bit_uint_(5);
+    ESP_LOGD(TAG, "Got PM2.5 Concentration: %d µg/m³", pm_2_5_concentration);
     this->pm_2_5_sensor_->publish_state(pm_2_5_concentration);
+  }
+  if (this->pm_10_0_sensor_ != nullptr) {
+    const int pm_10_0_concentration = this->get_16_bit_uint_(13);
+    ESP_LOGD(TAG, "Got PM10.0 Concentration: %d µg/m³", pm_10_0_concentration);
+    this->pm_10_0_sensor_->publish_state(pm_10_0_concentration);
   }
 }
 
